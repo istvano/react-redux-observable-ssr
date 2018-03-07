@@ -1,0 +1,27 @@
+node_modules
+build
+styleguide
+.DS_Store
+npm-debug.log
+.osync_workdir
+.eslintcache
+osync-sync.conf
+
+# IntelliJ
+.idea_modules/
+.pmd
+.svn
+.settings
+.vagrant
+.idea
+*.iws
+*.iml
+profile.json
+stats.json
+report.html
+node_modules/
+yarn.lock
+yarn-error.log
+.vscode/
+public/
+bundle/

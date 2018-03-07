@@ -1,0 +1,29 @@
+---
+  - name: "app"
+    box:  ubuntu/trusty64
+    autostart: true
+    communicator: ssh
+    ip:    10.0.0.75
+    cpu:   2
+    memory: 2048
+    host:  app
+    ports:
+        - { id: "yarn", guest: 3030, host: 3030, protocol: tcp, host_ip: 127.0.0.1 }
+        - { id: "node", guest: 3000, host: 3000, protocol: tcp, host_ip: 127.0.0.1 }
+        - { id: "nodedebug", guest: 9229, host: 9229, protocol: tcp, host_ip: 127.0.0.1 }
+    aliases:
+        - app.localhost.com
+    folders:
+        - { src: './', target: '/vagrant' }
+    provision-commands:
+        - { command: 'apt-get -y update && apt-get -y install build-essential checkinstall && apt-get -y install libssl-dev', privileged: true }
+        - { command: 'apt-get -y  install samba dnsutils && cp /vagrant/smb.conf /etc/samba/smb.conf &&  (echo vagrant; echo vagrant) | smbpasswd -a -s vagrant && service smbd restart', privileged: true }
+        - { command: 'curl -o- https://raw.githubusercontent.com/creationix/nvm/v0.33.8/install.sh | bash', privileged: false }
+        - { command: 'source ~/.profile && export NVM_DIR="$HOME/.nvm" && [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh" && nvm install v8.9.3 && npm install --global yarn', privileged: false }		
+        - { command: 'apt-get -y install git inotify-tools && curl -L -o- https://github.com/deajan/osync/archive/stable.tar.gz | tar xvz -C /opt && cd /opt/osync-stable && bash install.sh --silent --no-stats', privileged: true}
+        - { command: 'mkdir /home/vagrant/shared', privileged: false}
+        - { command: 'cp /vagrant/sync.conf /etc/osync/sync.conf && update-rc.d osync-srv defaults', privileged: true}
+        - { command: 'service osync-srv start', privileged: true, run: 'always'}
+    provision-docker: true
+    provision-docker-compose: 
+        - { yml: '/vagrant/docker/docker-compose-base.yml', env: {}, rebuild: false, run: 'once' }

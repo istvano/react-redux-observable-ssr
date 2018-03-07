@@ -1,0 +1,24 @@
+---
+PROJECT:
+  name: &project_name 'redux-sample'
+PROFILE:
+  ## git informations
+  email:    'user@example.com'
+  realname: 'FULL NAME'
+
+  ## Github username, eg. for automatic ssh pub-key fetching
+  githubUser: ''
+  # can use the project-name var as ->   my-var: *project_name
+VAGRANT:
+  version: ">= 1.9.5"
+  default_mem: 2048
+  default_cpu: 2
+  winrm:
+    retry_limit: 30
+    retry_delay: 10
+    max_tries: 30
+  plugins:
+    - vagrant-hostmanager
+    - vagrant-docker-compose
+    - vagrant-multi-putty
+    - vagrant-vbguest
